@@ -10,10 +10,35 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class GameShould implements WithAssertions, WithMockito {
 
+    @Mock
+    private Room starting;
+
+    @Mock
+    private EndCondition ending;
+
     @Test
-    void exist(@Mock Room starting, @Mock EndCondition ending) {
+    void exist() {
 
         assertThat(new Game(starting, ending)).isNotNull();
+
+    }
+
+    @Test
+    void knowWhenItIsNotRunning() {
+
+        when(ending.isEndReached()).thenReturn(true);
+
+        assertThat(new Game(starting, ending).isRunning()).isFalse();
+
+    }
+
+    @Test
+    void knowWhenItIsRunning() {
+
+        when(ending.isEndReached()).thenReturn(false);
+
+        assertThat((new Game(starting, ending).isRunning())).isTrue();
+
     }
 
 }
