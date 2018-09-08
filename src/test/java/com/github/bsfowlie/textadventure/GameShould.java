@@ -1,17 +1,25 @@
 package com.github.bsfowlie.textadventure;
 
+import java.io.PrintStream;
+import java.util.Arrays;
+import java.util.Collections;
+
 import info.solidsoft.mockito.java8.api.WithMockito;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class GameShould implements WithAssertions, WithMockito {
 
+    @InjectMocks
+    private Game game;
+
     @Mock
-    private Room starting;
+    private Room room;
 
     @Mock
     private EndCondition ending;
@@ -19,7 +27,7 @@ class GameShould implements WithAssertions, WithMockito {
     @Test
     void exist() {
 
-        assertThat(new Game(starting, ending)).isNotNull();
+        assertThat(game).isNotNull();
 
     }
 
@@ -28,7 +36,7 @@ class GameShould implements WithAssertions, WithMockito {
 
         when(ending.isEndReached()).thenReturn(true);
 
-        assertThat(new Game(starting, ending).isRunning()).isFalse();
+        assertThat(game.isRunning()).isFalse();
 
     }
 
@@ -37,7 +45,48 @@ class GameShould implements WithAssertions, WithMockito {
 
         when(ending.isEndReached()).thenReturn(false);
 
-        assertThat((new Game(starting, ending).isRunning())).isTrue();
+        assertThat(game.isRunning()).isTrue();
+
+    }
+
+    @Test
+    void showItsCurrentLocationWithoutItems(@Mock PrintStream out) {
+
+        when(room.description()).thenReturn("current room");
+        when(room.itemNames()).thenReturn(Collections.emptyList());
+
+        game.showCurrentLocation(out);
+
+        verify(out).println("current room");
+        verifyNoMoreInteractions(out);
+
+    }
+
+    @Test
+    void showItsCurrentLocationWithOneItem(@Mock PrintStream out) {
+
+        when(room.description()).thenReturn("current room");
+        when(room.itemNames()).thenReturn(Collections.singletonList("item"));
+
+        game.showCurrentLocation(out);
+
+        verify(out).println("current room");
+        verify(out).println("You see: item");
+        verifyNoMoreInteractions(out);
+
+    }
+
+    @Test
+    void showItsCurrentLocationWithMultipleItems(@Mock PrintStream out) {
+
+        when(room.description()).thenReturn("current room");
+        when(room.itemNames()).thenReturn(Arrays.asList("item", "object"));
+
+        game.showCurrentLocation(out);
+
+        verify(out).println("current room");
+        verify(out).println("You see: item, object");
+        verifyNoMoreInteractions(out);
 
     }
 
