@@ -3,7 +3,7 @@ package com.github.bsfowlie.textadventure;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.Test;
 
-class RoomShould implements WithAssertions {
+final class RoomShould implements WithAssertions {
 
     @Test
     void haveDescription() {
